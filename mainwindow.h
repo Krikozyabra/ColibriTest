@@ -20,9 +20,17 @@ public:
 private slots:
     void on_scanButton_clicked();
 
-    void on_folderSelectButton_clicked();
+    void on_inputFolderSelectButton_clicked();
+
+    void on_reapitingChoose_triggered(QAction *arg1);
+
+    void on_outputFolderSelectButton_clicked();
+
+    void on_startButton_clicked();
 
 private:
     Ui::MainWindow *ui;
+
+    void setupToolButton();
 };
 #endif // MAINWINDOW_H

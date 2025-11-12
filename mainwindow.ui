@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
-    <height>600</height>
+    <width>431</width>
+    <height>472</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -19,22 +25,22 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>411</width>
-      <height>129</height>
+      <width>431</width>
+      <height>441</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="inputFolderForm">
        <item>
-        <widget class="QLineEdit" name="folerPathLine">
+        <widget class="QLineEdit" name="inputFolerPathLine">
          <property name="placeholderText">
-          <string>Path to folder</string>
+          <string>Path to input folder</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="folderSelectButton">
+        <widget class="QPushButton" name="inputFolderSelectButton">
          <property name="text">
           <string>Choose Folder</string>
          </property>
@@ -43,9 +49,9 @@
       </layout>
      </item>
      <item>
-      <widget class="QLineEdit" name="fileMaskEdit">
+      <widget class="QLineEdit" name="fileMaskLine">
        <property name="placeholderText">
-        <string>File mask</string>
+        <string>File masks (e.g: &quot;*.txt, *.bin&quot;)</string>
        </property>
       </widget>
      </item>
@@ -59,7 +65,98 @@
      <item>
       <widget class="QLabel" name="fileList">
        <property name="text">
-        <string>TextLabel</string>
+        <string>List of founded files: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="deleteInputCheck">
+       <property name="text">
+        <string>Delete input files</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="outputFolderForm">
+       <item>
+        <widget class="QLineEdit" name="outputFolderPathLine">
+         <property name="placeholderText">
+          <string>Path to output folder</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="outputFolderSelectButton">
+         <property name="text">
+          <string>Choose Folder</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>What to do with reapiting</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="reapitingChoose">
+         <property name="text">
+          <string>Tool button</string>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonStyle::ToolButtonTextOnly</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>false</bool>
+         </property>
+         <property name="arrowType">
+          <enum>Qt::ArrowType::NoArrow</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="xorDataLine">
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="maxLength">
+        <number>8</number>
+       </property>
+       <property name="placeholderText">
+        <string>8 bytes key</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="startButton">
+       <property name="text">
+        <string>Start</string>
        </property>
       </widget>
      </item>
