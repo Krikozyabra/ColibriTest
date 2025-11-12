@@ -18,8 +18,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_scanButton_clicked();
-
     void on_inputFolderSelectButton_clicked();
 
     void on_reapitingChoose_triggered(QAction *arg1);

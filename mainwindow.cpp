@@ -3,7 +3,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMenu>
-#include "buisness.h"
+#include "./fileprogress.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,40 +31,6 @@ void MainWindow::setupToolButton(){
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-// Функция обрабатывает эвент clicked у кнопки и считывает путь до папки и маску файлов и все найденные файли выписывает в label
-void MainWindow::on_scanButton_clicked()
-{
-    // Проверка на существование выбранной директории
-    QDir folderPath(ui->inputFolerPathLine->text());
-    if(!folderPath.exists()){
-        QMessageBox::warning(this, tr("Broken directory"), tr("Selected directory is not exist."));
-    }
-
-    // Создание списка фильтров для файлов
-    QString fileMasks = ui->fileMaskLine->text();
-    if(fileMasks.isEmpty()) {
-        QMessageBox::warning(this, tr("No file mask"), tr("You didn't type file mask"));
-        return;
-    }
-    QStringList fileMasksList;
-    for(auto fileMask : fileMasks.split(',')){
-        fileMasksList << fileMask.trimmed();
-    }
-
-    // Поиск файлов в указанной папке с указанынми фильтрами
-    QFileInfoList files = folderPath.entryInfoList(fileMasksList, QDir::Files);
-    if(files.isEmpty()){
-        ui->fileList->setText("No files found");
-        return;
-    }
-
-    //Отображение файлов
-    ui->fileList->setText("List of founded files:");
-    for(const auto &file : files){
-        ui->fileList->setText(ui->fileList->text() + '\n' + file.fileName());
-    }
 }
 
 // Функция обрабатывает эвент clicked у кнопки и вызывает диалоговое окно, в котором пользователь выбирает папку с файлами
@@ -101,7 +67,6 @@ void MainWindow::on_outputFolderSelectButton_clicked()
     }
 }
 
-
 void MainWindow::on_startButton_clicked()
 {
     // Проверка на существование выбранной входной директории
@@ -132,7 +97,7 @@ void MainWindow::on_startButton_clicked()
     // Поиск файлов в указанной папке с указанынми фильтрами
     QFileInfoList files = inputFolderPath.entryInfoList(fileMasksList, QDir::Files);
     if(files.isEmpty()){
-        ui->fileList->setText("No files found");
+        ui->infoLabel->setText("No files found");
         return;
     }
 
@@ -140,8 +105,12 @@ void MainWindow::on_startButton_clicked()
     std::string keyCode = ui->xorDataLine->text().toStdString();
     size_t keyCodeLen = keyCode.length();
 
+    // Получение vertical layout, в котором будет размещатсья информация об обрабатываемых файлах
+    QVBoxLayout *fileInfoLayout = ui->filesList;
+
     for(const auto &file : files){
-        xorFile(file, outputFolderPath, keyCode, keyCodeLen);
+        FileProgress *fileWidget = new FileProgress(file, outputFolderPath, keyCode, (int) keyCodeLen, this);
+        fileInfoLayout->addWidget(fileWidget);
     }
 }
 
