@@ -5,6 +5,7 @@
 #include <QMenu>
 #include "./fileprogress.h"
 #include "config.h"
+#include "tool.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -78,7 +79,7 @@ void MainWindow::on_startButton_clicked()
         ui->infoLabel->setText(m);
         return;
     }
-
+    ui->infoLabel->setText("");
     // Запись 8-байтовой переменной
     config->setKeyCode(ui->xorDataLine->text().toStdString());
     // Получаем настройку на удаление входных файлов по окончании работы
@@ -120,10 +121,9 @@ void MainWindow::on_startButton_clicked()
         return;
     }
 
-    qDebug() << files[files.length()-1].fileName();
-
     // Получение vertical layout, в котором будет размещатсья информация об обрабатываемых файлах
     QVBoxLayout *fileInfoLayout = ui->filesList;
+    // Очистка layout, если уже был использован
     if(!fileInfoLayout->isEmpty()){
         QLayoutItem *child;
         while ((child = fileInfoLayout->takeAt(0)) != 0) {
@@ -136,12 +136,22 @@ void MainWindow::on_startButton_clicked()
         }
     }
 
-    for(const QFileInfo &file : files){
-        FileProgress *fileWidget = new FileProgress(file, outputFolderPath, this);
+    QFileInfo outputFile;
+    for(const QFileInfo &inputFile : files){
+        if(config->getOutputFilesMode() == MODIFY_FILES){
+            outputFile = defineOutputFile(inputFile, outputFolderPath);
+        }else if(config->getOutputFilesMode() == REWRITE_FILES){
+            outputFile = createNewOutputFile(inputFile, outputFolderPath);
+        }
+        FileProgress *fileWidget = new FileProgress(inputFile,
+                                                    outputFile,
+                                                    this);
         fileInfoLayout->addWidget(fileWidget);
         config->addFileInProcess();
     }
 }
+
+
 
 
 
