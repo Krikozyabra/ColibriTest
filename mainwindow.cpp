@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QMenu>
 #include "./fileprogress.h"
+#include "config.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -69,6 +70,22 @@ void MainWindow::on_outputFolderSelectButton_clicked()
 
 void MainWindow::on_startButton_clicked()
 {
+    Config *config = Config::GetInstace();
+    if(config->getNumberOfFiles() > 0){
+        QString m = "На данный момент обрабатывается " +
+                    QString::number(config->getNumberOfFiles()) +
+                    " файлов, поэтому дождитесь завершения";
+        ui->infoLabel->setText(m);
+        return;
+    }
+
+    // Запись 8-байтовой переменной
+    config->setKeyCode(ui->xorDataLine->text().toStdString());
+    // Получаем настройку на удаление входных файлов по окончании работы
+    config->setDeletingInputFilesFlag(ui->deleteInputCheck->checkState());
+    // Получаем настройку повторяющихся файлов
+    config->setOutputFilesMode((ui->reapitingChoose->text().contains("Modify") ? MODIFY_FILES : REWRITE_FILES));
+
     // Проверка на существование выбранной входной директории
     QDir inputFolderPath(ui->inputFolerPathLine->text());
     if(!inputFolderPath.exists()){
@@ -90,27 +107,39 @@ void MainWindow::on_startButton_clicked()
         return;
     }
     QStringList fileMasksList;
-    for(auto fileMask : fileMasks.split(',')){
+
+    const auto fileMasksSplitted = fileMasks.split(',');
+    for(const QString &fileMask : fileMasksSplitted){
         fileMasksList << fileMask.trimmed();
     }
 
     // Поиск файлов в указанной папке с указанынми фильтрами
-    QFileInfoList files = inputFolderPath.entryInfoList(fileMasksList, QDir::Files);
+    const auto files = inputFolderPath.entryInfoList(fileMasksList, QDir::Files);
     if(files.isEmpty()){
         ui->infoLabel->setText("No files found");
         return;
     }
 
-    // Запись 8-байтовой переменной
-    std::string keyCode = ui->xorDataLine->text().toStdString();
-    size_t keyCodeLen = keyCode.length();
+    qDebug() << files[files.length()-1].fileName();
 
     // Получение vertical layout, в котором будет размещатсья информация об обрабатываемых файлах
     QVBoxLayout *fileInfoLayout = ui->filesList;
+    if(!fileInfoLayout->isEmpty()){
+        QLayoutItem *child;
+        while ((child = fileInfoLayout->takeAt(0)) != 0) {
+            // Check if the item has a widget and delete it
+            if (child->widget()) {
+                delete child->widget();
+            }
+            // Delete the layout item itself
+            delete child;
+        }
+    }
 
-    for(const auto &file : files){
-        FileProgress *fileWidget = new FileProgress(file, outputFolderPath, keyCode, (int) keyCodeLen, this);
+    for(const QFileInfo &file : files){
+        FileProgress *fileWidget = new FileProgress(file, outputFolderPath, this);
         fileInfoLayout->addWidget(fileWidget);
+        config->addFileInProcess();
     }
 }
 
