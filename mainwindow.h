@@ -29,15 +29,15 @@ private slots:
 
     void on_timerCheck_checkStateChanged(const Qt::CheckState &arg1);
 
-    void startProcess();
-
-    void enablingInterface(bool flag);
-
     void on_stopButton_clicked();
+
+    void handleAllFilesModified();
 
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
     void setupToolButton();
+    void startProcess();
+    void enablingInterface(bool flag);
 };
 #endif // MAINWINDOW_H

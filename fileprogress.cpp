@@ -1,6 +1,7 @@
 #include "fileprogress.h"
 #include "ui_fileprogress.h"
 #include "tool.h"
+#include "config.h"
 #include <thread>
 
 FileProgress::FileProgress(const QFileInfo &inputFile, QFileInfo &outputFile, QWidget *parent)
@@ -21,12 +22,23 @@ FileProgress::FileProgress(const QFileInfo &inputFile, QFileInfo &outputFile, QW
     connect(this, &FileProgress::hideProgressBar,
             this, &FileProgress::setProgressBarVisible, Qt::QueuedConnection);
 
+    connect(this, &FileProgress::endFileModify,
+            this, &FileProgress::handleEndFileModify, Qt::QueuedConnection);
+
     xorFile(inputFile, outputFile);
 }
 
 FileProgress::~FileProgress()
 {
     delete ui;
+}
+
+void FileProgress::handleEndFileModify(){
+    Config *c = Config::GetInstace();
+    c->delFileInProcess();
+    if(c->getNumberOfFiles() < 1){
+        emit allFilesModified();
+    }
 }
 
 void FileProgress::setProgress(int currentProgress){

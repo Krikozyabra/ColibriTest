@@ -95,6 +95,11 @@ void MainWindow::on_stopButton_clicked()
     ui->stopButton->setEnabled(false);
 }
 
+void MainWindow::handleAllFilesModified(){
+    ui->startButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
+}
+
 
 void MainWindow::enablingInterface(bool flag){
     ui->timerLengthLine->setEnabled(flag);
@@ -158,6 +163,7 @@ void MainWindow::startProcess(){
     const auto files = inputFolderPath.entryInfoList(fileMasksList, QDir::Files);
     if(files.isEmpty()){
         ui->infoLabel->setText("No files found");
+        this->handleAllFilesModified();
         return;
     }
 
@@ -186,6 +192,7 @@ void MainWindow::startProcess(){
         FileProgress *fileWidget = new FileProgress(inputFile,
                                                     outputFile,
                                                     this);
+        connect(fileWidget, &FileProgress::allFilesModified, this, &MainWindow::handleAllFilesModified);
         fileInfoLayout->addWidget(fileWidget);
         config->addFileInProcess();
     }

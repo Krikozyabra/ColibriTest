@@ -36,15 +36,13 @@ void xoring(QString inputPath, QString outputPath, FileProgress *fp)
             emit fp->progressChanged(i);
         ++i;
     }
-
-    config->delFileInProcess();
-
     inputStream.close();
     // Если флаг на удлаение входных файлов установлен, то удаляем файл
     if(config->getDeletingInputFilesFlag()) std::remove(inputPath.toStdString().c_str());
     outputStream.close();
 
     emit fp->progressChanged(i); // Последнее обновление
+    emit fp->endFileModify();
 }
 
 // Создаем при необходимости выходной файл и возвращаем информацию о нем
