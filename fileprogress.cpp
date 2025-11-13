@@ -37,7 +37,9 @@ void FileProgress::handleEndFileModify(){
     Config *c = Config::GetInstace();
     c->delFileInProcess();
     if(c->getNumberOfFiles() < 1){
-        emit allFilesModified();
+        if(!c->getWithTimer()){
+            emit allFilesModified();
+        }
     }
 }
 

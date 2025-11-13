@@ -123,7 +123,8 @@ void MainWindow::startProcess(){
         ui->infoLabel->setText(m);
         return;
     }
-
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
     ui->infoLabel->setText("");
     // Запись 8-байтовой переменной
     config->setKeyCode(ui->xorDataLine->text().toStdString());
