@@ -32,6 +32,12 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
         numberOfFiles--;}
 
+    bool getWithTimer(){return this->withTimer;}
+    void setWithTime(bool val){this->withTimer = val;}
+
+    float getTimerLength(){return this->timerLength;}
+    void setTimerLength(float val){this->timerLength = val;}
+
     // Singleton не должен принимать новое значение и не должен быть клонируемым
     Config(Config &other) = delete;
     void operator=(const Config &) = delete;
@@ -46,8 +52,10 @@ protected:
 private:
     bool deletingInputFilesFlag;
     bool outputFilesMode;
-    std::string keyCode;
-    int numberOfFiles;
+    bool withTimer;
+    std::string keyCode = "";
+    int numberOfFiles = 0;
+    float timerLength = .0f;
 
     // Для хранение единственного экземпляра и мьютекс для многопоточности
     static Config * pinstance_;

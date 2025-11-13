@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::startProcess);
+    emit ui->timerCheck->checkStateChanged(Qt::Unchecked);
 
     setupToolButton();
 }
@@ -71,6 +74,42 @@ void MainWindow::on_outputFolderSelectButton_clicked()
 
 void MainWindow::on_startButton_clicked()
 {
+    Config *c = Config::GetInstace();
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
+    if(!c->getWithTimer()){
+        emit this->startProcess();
+    }else{
+        emit this->startProcess();
+        c->setTimerLength(ui->timerLengthLine->text().toFloat());
+        this->timer->start(c->getTimerLength()*1000);
+        emit this->enablingInterface(false);
+    }
+}
+
+void MainWindow::on_stopButton_clicked()
+{
+    this->timer->stop();
+    emit this->enablingInterface(true);
+    ui->startButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
+}
+
+
+void MainWindow::enablingInterface(bool flag){
+    ui->timerLengthLine->setEnabled(flag);
+    ui->fileMaskLine->setEnabled(flag);
+    ui->inputFolerPathLine->setEnabled(flag);
+    ui->inputFolderSelectButton->setEnabled(flag);
+    ui->xorDataLine->setEnabled(flag);
+    ui->timerCheck->setEnabled(flag);
+    ui->reapitingChoose->setEnabled(flag);
+    ui->outputFolderPathLine->setEnabled(flag);
+    ui->outputFolderSelectButton->setEnabled(flag);
+    ui->deleteInputCheck->setEnabled(flag);
+}
+
+void MainWindow::startProcess(){
     Config *config = Config::GetInstace();
     if(config->getNumberOfFiles() > 0){
         QString m = "На данный момент обрабатывается " +
@@ -79,6 +118,7 @@ void MainWindow::on_startButton_clicked()
         ui->infoLabel->setText(m);
         return;
     }
+
     ui->infoLabel->setText("");
     // Запись 8-байтовой переменной
     config->setKeyCode(ui->xorDataLine->text().toStdString());
@@ -151,7 +191,13 @@ void MainWindow::on_startButton_clicked()
     }
 }
 
-
+void MainWindow::on_timerCheck_checkStateChanged(const Qt::CheckState &arg1)
+{
+    Config *c = Config::GetInstace();
+    ui->timerLengthLine->setVisible(arg1);
+    ui->stopButton->setVisible(arg1);
+    c->setWithTime(arg1);
+}
 
 
 

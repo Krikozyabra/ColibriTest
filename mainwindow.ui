@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>431</width>
-    <height>527</height>
+    <height>602</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,7 +26,7 @@
       <x>0</x>
       <y>0</y>
       <width>431</width>
-      <height>521</height>
+      <height>601</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -63,6 +63,23 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="timerCheck">
+       <property name="text">
+        <string>Check input folder by time</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="timerLengthLine">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Timer length in seconds</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="outputFolderForm">
        <item>
         <widget class="QLineEdit" name="outputFolderPathLine">
@@ -85,7 +102,10 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>What to do with reapiting</string>
+          <string>What to do with reapiting outputfiles</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -143,6 +163,13 @@
       <widget class="QPushButton" name="startButton">
        <property name="text">
         <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="stopButton">
+       <property name="text">
+        <string>Stop</string>
        </property>
       </widget>
      </item>
