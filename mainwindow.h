@@ -18,6 +18,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+signals:
+    void printInfoMessage(QString message);
+
 private slots:
     void on_inputFolderSelectButton_clicked();
 
@@ -31,13 +34,15 @@ private slots:
 
     void on_stopButton_clicked();
 
-    void handleAllFilesModified();
+    void on_allFilesModified();
+
+    void on_printInfoMessage(QString message);
 
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
     void setupToolButton();
     void startProcess();
-    void enablingInterface(bool flag);
+    void setEnablingInterface(bool flag);
 };
 #endif // MAINWINDOW_H

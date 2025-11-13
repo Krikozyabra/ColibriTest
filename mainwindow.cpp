@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::startProcess);
+    connect(this, &MainWindow::printInfoMessage, this, &MainWindow::on_printInfoMessage);
     emit ui->timerCheck->checkStateChanged(Qt::Unchecked);
 
     setupToolButton();
@@ -75,33 +76,34 @@ void MainWindow::on_outputFolderSelectButton_clicked()
 void MainWindow::on_startButton_clicked()
 {
     Config *c = Config::GetInstace();
-    ui->startButton->setEnabled(false);
-    ui->stopButton->setEnabled(true);
+    this->setEnablingInterface(false);
     if(!c->getWithTimer()){
         emit this->startProcess();
     }else{
         emit this->startProcess();
         c->setTimerLength(ui->timerLengthLine->text().toFloat());
         this->timer->start(c->getTimerLength()*1000);
-        emit this->enablingInterface(false);
     }
 }
 
 void MainWindow::on_stopButton_clicked()
 {
     this->timer->stop();
-    emit this->enablingInterface(true);
-    ui->startButton->setEnabled(true);
-    ui->stopButton->setEnabled(false);
+    this->setEnablingInterface(true);
 }
 
-void MainWindow::handleAllFilesModified(){
-    ui->startButton->setEnabled(true);
-    ui->stopButton->setEnabled(false);
+void MainWindow::on_allFilesModified(){
+    this->setEnablingInterface(true);
+}
+
+void MainWindow::on_printInfoMessage(QString message){
+    ui->infoLabel->setText(message);
 }
 
 
-void MainWindow::enablingInterface(bool flag){
+void MainWindow::setEnablingInterface(bool flag){
+    ui->startButton->setEnabled(flag);
+    ui->stopButton->setEnabled(!flag);
     ui->timerLengthLine->setEnabled(flag);
     ui->fileMaskLine->setEnabled(flag);
     ui->inputFolerPathLine->setEnabled(flag);
@@ -123,8 +125,6 @@ void MainWindow::startProcess(){
         ui->infoLabel->setText(m);
         return;
     }
-    ui->startButton->setEnabled(false);
-    ui->stopButton->setEnabled(true);
     ui->infoLabel->setText("");
     // Запись 8-байтовой переменной
     config->setKeyCode(ui->xorDataLine->text().toStdString());
@@ -164,7 +164,7 @@ void MainWindow::startProcess(){
     const auto files = inputFolderPath.entryInfoList(fileMasksList, QDir::Files);
     if(files.isEmpty()){
         ui->infoLabel->setText("No files found");
-        this->handleAllFilesModified();
+        this->setEnablingInterface(true);
         return;
     }
 
@@ -174,11 +174,11 @@ void MainWindow::startProcess(){
     if(!fileInfoLayout->isEmpty()){
         QLayoutItem *child;
         while ((child = fileInfoLayout->takeAt(0)) != 0) {
-            // Check if the item has a widget and delete it
+            // Проверяем, что ребенок layout'а имеет виджет и удаляем его
             if (child->widget()) {
                 delete child->widget();
             }
-            // Delete the layout item itself
+            // Удаляем самого ребенка layout'а
             delete child;
         }
     }
@@ -193,12 +193,13 @@ void MainWindow::startProcess(){
         FileProgress *fileWidget = new FileProgress(inputFile,
                                                     outputFile,
                                                     this);
-        connect(fileWidget, &FileProgress::allFilesModified, this, &MainWindow::handleAllFilesModified);
+        connect(fileWidget, &FileProgress::allFilesModified, this, &MainWindow::on_allFilesModified);
         fileInfoLayout->addWidget(fileWidget);
         config->addFileInProcess();
     }
 }
 
+// Изменяем конфиг, если ставится, что будет работать программа по таймеру
 void MainWindow::on_timerCheck_checkStateChanged(const Qt::CheckState &arg1)
 {
     Config *c = Config::GetInstace();

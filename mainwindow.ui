@@ -187,7 +187,36 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="filesList"/>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>427</width>
+          <height>212</height>
+         </rect>
+        </property>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>429</width>
+           <height>211</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="filesList">
+          <property name="sizeConstraint">
+           <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+          </property>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
      </item>
     </layout>
    </widget>
