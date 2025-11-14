@@ -30,7 +30,9 @@ void xoring(QString inputPath, QString outputPath, FileProgress *fp)
     std::string key = config->getKeyCode();
     int keyLen = config->getKeyCodeLen();
     while(inputStream.get(buffer)){
+        qDebug() << "Before: " <<buffer<< " "<<static_cast<int>(buffer);
         buffer ^= key[i%keyLen];
+        qDebug() << "After: " << buffer << " "<<static_cast<int>(buffer);
         outputStream.put(buffer);
         if (i % 1024 == 0)  // Делаем обнолвение не каждый тиак, чтобы уменьшить лаги
             emit fp->progressChanged(i);
@@ -74,7 +76,11 @@ QFileInfo defineOutputFile(QFileInfo inputFile, QDir outputFolderPath){
         const auto res = outputFolderPath.entryInfoList(newFileFilter).constLast();
         return res;
     }else{
-        return outputFilesTest.last();
+        QString newOutputFilePath = outputFolderPath.absoluteFilePath(inputFile.fileName());
+        std::ofstream newOF(newOutputFilePath.toStdString());
+        newOF.close();
+        const auto res = outputFolderPath.entryInfoList(QStringList()<<inputFile.fileName()).constLast();
+        return res;
     }
 }
 
